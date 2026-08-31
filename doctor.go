@@ -1,3 +1,4 @@
+// FasterEdge 开源项目 · https://github.com/FasterEdge · https://gitee.com/FasterEdge
 // Package doctor provides repository and remote health diagnostics for FasterEdge.
 package doctor
 
