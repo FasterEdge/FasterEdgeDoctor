@@ -1,0 +1,4 @@
+/fasteredge-doctor
+*.out
+coverage.txt
+.DS_Store
