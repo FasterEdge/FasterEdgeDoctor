@@ -43,7 +43,7 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         name: 'fasteredge-doctor-${{ matrix.target }}'
-        path: 'fasteredge-doctor-${{ matrix.target }}.tar.gz'
+        path: '${{ github.workspace }}/fasteredge-doctor-${{ matrix.target }}.*'
         if-no-files-found: 'error'
         retention-days: 1
 
