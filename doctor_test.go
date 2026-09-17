@@ -82,6 +82,21 @@ func TestServerRejectsBadAuthAndRequest(t *testing.T) {
 		t.Fatalf("status %d", resp.StatusCode)
 	}
 }
+func TestServerRequiresAuthWhenSecretConfigured(t *testing.T) {
+	// 配置 Secret 但未开启 RequireOneKey 时, 端点仍必须强制鉴权;
+	// 否则匿名请求会绕过 authenticate(见 ServeHTTP 的鉴权边界修复)。
+	s := httptest.NewServer(&Server{Root: fixture(t), Secret: "0123456789abcdef"})
+	defer s.Close()
+	req, _ := http.NewRequest(http.MethodPost, s.URL+"/v1/check", nil)
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusUnauthorized {
+		t.Fatalf("status %d, want 401", resp.StatusCode)
+	}
+}
 func TestReportJSON(t *testing.T) {
 	b, err := json.Marshal(Local(context.Background(), fixture(t)))
 	if err != nil || len(b) == 0 {

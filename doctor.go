@@ -264,7 +264,12 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	if s.RequireOneKey || r.Header.Get("Authorization") != "" {
+	// 鉴权边界: 只要配置了 Secret 就必须验证, 不能仅靠"请求带了
+	// Authorization 头"才走鉴权。旧逻辑在 Secret 已配置但 RequireOneKey
+	// 未开启时, 匿名请求(无 Authorization 头)会直接跳过 authenticate,
+	// 使运维以为"设了密钥就安全", 实际端点仍对全网开放, 可被匿名触发
+	// go test(未授权 DoS)并回读文件系统路径(信息泄露)。
+	if s.RequireOneKey || s.Secret != "" || r.Header.Get("Authorization") != "" {
 		if !s.authenticate(r.Header.Get("Authorization")) {
 			http.Error(w, "authentication failed", http.StatusUnauthorized)
 			return
