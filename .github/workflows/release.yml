@@ -40,7 +40,7 @@ jobs:
         else
           tar czf ../fasteredge-doctor-${{ matrix.target }}.tar.gz fasteredge-doctor
         fi
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v7
       with:
         name: 'fasteredge-doctor-${{ matrix.target }}'
         path: '${{ github.workspace }}/fasteredge-doctor-${{ matrix.target }}.*'
